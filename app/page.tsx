@@ -3,13 +3,13 @@
 // FIREBASE
 import { initializeApp } from 'firebase/app';
 import {
-  addDoc,
   collection,
   DocumentData,
   getDocs,
   getFirestore,
 } from 'firebase/firestore';
-import { SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import FormInput from './FormInput';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBJk_dUeh0pp83_1mWVhZaSmbdA17CG8po',
@@ -32,6 +32,7 @@ const db = getFirestore(app);
 
 export default function Home() {
   const [users, setUsers] = useState<DocumentData>([]);
+  const [newData, setNewData] = useState<any>({});
 
   useEffect(() => {
     getDocs(collection(db, 'users')).then((data) => {
@@ -45,12 +46,16 @@ export default function Home() {
 
   return (
     <main className='w-full h-screen'>
-      <div className='w-full h-full flex justify-center items-center'>
-        <table className='table w-4/12'>
-          <thead>
-            <tr className='text-black'>
-              <th className='border-e-[1px] border-slate-400'>Title</th>
-              <th className='border-e-[1px] border-slate-400'>Height</th>
+      <div className='w-full h-full flex flex-col justify-center items-center gap-10'>
+        <h1 className='text-3xl font-bold'>Data From Firebase Databases</h1>
+        <div className='overflow-x-auto max-w-4xl'>
+          <FormInput />
+        </div>
+        <table className='table table-zebra max-w-4xl'>
+          <thead className='border-b-[1px] border-black'>
+            <tr className='text-black text-lg'>
+              <th className=''>Name</th>
+              <th className=''>Height</th>
               <th>Weight</th>
             </tr>
           </thead>
@@ -58,12 +63,8 @@ export default function Home() {
             {users.map((item: any, i: number) => {
               return (
                 <tr key={i}>
-                  <td className='border-e-[1px] border-slate-400'>
-                    {item.name}
-                  </td>
-                  <td className='border-e-[1px] border-slate-400'>
-                    {item.height}
-                  </td>
+                  <td className=''>{item.name}</td>
+                  <td className=''>{item.height}</td>
                   <td>{item.weight}</td>
                 </tr>
               );
