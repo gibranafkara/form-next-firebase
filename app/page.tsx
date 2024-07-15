@@ -3,6 +3,7 @@
 // FIREBASE
 import { initializeApp } from 'firebase/app';
 import {
+  addDoc,
   collection,
   DocumentData,
   getDocs,
@@ -32,24 +33,60 @@ const db = getFirestore(app);
 
 export default function Home() {
   const [users, setUsers] = useState<DocumentData>([]);
-  const [newData, setNewData] = useState<any>({});
+  const [newData, setNewData] = useState<any>({
+    name: '',
+    height: 0,
+    weight: 0,
+  });
+
+  const fetchData = async () => {
+    getDocs(collection(db, 'users')).then((querySnapShot) => {
+      const updateData = querySnapShot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      setUsers(updateData);
+    });
+  };
 
   useEffect(() => {
-    getDocs(collection(db, 'users')).then((data) => {
-      if (!data.empty) {
-        setUsers(data.docs.map((item) => item.data()));
-      } else {
-        console.log('no data');
-      }
-    });
+    fetchData();
   }, [users]);
+
+  function handleChangeInput(e: any) {
+    const { name, value } = e.target;
+    setNewData((prevDataInput: any) => ({
+      ...prevDataInput,
+      [name]: value,
+    }));
+  }
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    await addDoc(collection(db, 'users'), {
+      name: newData.name,
+      height: newData.height,
+      weight: newData.weight,
+    });
+
+    setNewData({
+      name: '',
+      height: 0,
+      weight: 0,
+    });
+  };
 
   return (
     <main className='w-full h-screen'>
       <div className='w-full h-full flex flex-col justify-center items-center gap-10'>
         <h1 className='text-3xl font-bold'>Data From Firebase Databases</h1>
         <div className='overflow-x-auto max-w-4xl'>
-          <FormInput />
+          <FormInput
+            onSubmitForm={handleSubmit}
+            onChangeInput={handleChangeInput}
+            datas={newData}
+          />
         </div>
         <table className='table table-zebra max-w-4xl'>
           <thead className='border-b-[1px] border-black'>
@@ -60,7 +97,7 @@ export default function Home() {
             </tr>
           </thead>
           <tbody className='text-black'>
-            {users.map((item: any, i: number) => {
+            {users?.map((item: any, i: number) => {
               return (
                 <tr key={i}>
                   <td className=''>{item.name}</td>
