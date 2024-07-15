@@ -5,6 +5,7 @@ import { initializeApp } from 'firebase/app';
 import {
   addDoc,
   collection,
+  doc,
   DocumentData,
   getDocs,
   getFirestore,
@@ -88,21 +89,28 @@ export default function Home() {
             datas={newData}
           />
         </div>
-        <table className='table table-zebra max-w-4xl'>
-          <thead className='border-b-[1px] border-black'>
+        <table className='table table-zebra max-w-6xl'>
+          <thead className='border-b-[1px] border-black text-[20px]'>
             <tr className='text-black text-lg'>
               <th className=''>Name</th>
               <th className=''>Height</th>
               <th>Weight</th>
+              <th className=''></th>
             </tr>
           </thead>
-          <tbody className='text-black'>
+          <tbody className='text-black box-border text-[18px]'>
             {users?.map((item: any, i: number) => {
               return (
                 <tr key={i}>
                   <td className=''>{item.name}</td>
                   <td className=''>{item.height}</td>
                   <td>{item.weight}</td>
+                  <td className=' w-1/6'>
+                    <div className='flex justify-center gap-3'>
+                      <button className='btn btn-sm btn-primary'>Edit</button>
+                      <button className='btn btn-sm btn-error'>Delete</button>
+                    </div>
+                  </td>
                 </tr>
               );
             })}
