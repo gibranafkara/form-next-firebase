@@ -70,6 +70,8 @@ export default function Home() {
 
     setNewData({
       name: '',
+      height: '',
+      weight: '',
     });
   };
 

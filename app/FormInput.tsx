@@ -1,5 +1,4 @@
 import React, { FormEvent } from 'react';
-import Edit from './Edit';
 
 export default function FormInput({
   onSubmitForm,
