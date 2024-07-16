@@ -1,32 +1,19 @@
 'use client';
 
 // FIREBASE
-import { initializeApp } from 'firebase/app';
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   DocumentData,
-  getDocs,
-  getFirestore,
+  onSnapshot,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import FormInput from './FormInput';
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyBJk_dUeh0pp83_1mWVhZaSmbdA17CG8po',
-  authDomain: 'personal-e040f.firebaseapp.com',
-  databaseURL:
-    'https://personal-e040f-default-rtdb.asia-southeast1.firebasedatabase.app',
-  projectId: 'personal-e040f',
-  storageBucket: 'personal-e040f.appspot.com',
-  messagingSenderId: '808091356379',
-  appId: '1:808091356379:web:fe9b29b6c5008406ae10fe',
-  measurementId: 'G-XR0KLY9JNT',
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { users as datas } from './users.json';
+import EditButton from './Edit';
+import { db } from './firebase';
 
 // datas.map((item) => {
 //   addDoc(collection(db, 'users'), item);
@@ -36,24 +23,34 @@ export default function Home() {
   const [users, setUsers] = useState<DocumentData>([]);
   const [newData, setNewData] = useState<any>({
     name: '',
-    height: 0,
-    weight: 0,
+    height: '',
+    weight: '',
   });
+  const [edit, setEdit] = useState<React.ReactNode>(null);
 
-  const fetchData = async () => {
-    getDocs(collection(db, 'users')).then((querySnapShot) => {
-      const updateData = querySnapShot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
+  // const fetchData = async () => {
+  //   getDocs(collection(db, 'users')).then((querySnapShot) => {
+  //     const updateData = querySnapShot.docs.map((doc) => ({
+  //       ...doc.data(),
+  //       id: doc.id,
+  //     }));
 
-      setUsers(updateData);
+  //     setUsers(updateData);
+  //   });
+  // };
+  function fetchData() {
+    onSnapshot(collection(db, 'users'), (snapshot) => {
+      let users: any = [];
+      snapshot.docs.forEach((doc) => {
+        users.push({ ...doc.data(), id: doc.id });
+      });
+      setUsers(users);
     });
-  };
-
+  }
   useEffect(() => {
     fetchData();
-  }, [users]);
+  }, []);
+  useEffect(() => {}, [users]);
 
   function handleChangeInput(e: any) {
     const { name, value } = e.target;
@@ -73,8 +70,6 @@ export default function Home() {
 
     setNewData({
       name: '',
-      height: 0,
-      weight: 0,
     });
   };
 
@@ -107,8 +102,35 @@ export default function Home() {
                   <td>{item.weight}</td>
                   <td className=' w-1/6'>
                     <div className='flex justify-center gap-3'>
-                      <button className='btn btn-sm btn-primary'>Edit</button>
-                      <button className='btn btn-sm btn-error'>Delete</button>
+                      <button
+                        className='btn btn-sm btn-primary'
+                        onClick={() => {
+                          setEdit(
+                            <>
+                              <EditButton
+                                onSetEdit={setEdit}
+                                users={item}
+                              />
+                            </>
+                          );
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className='btn btn-sm btn-error'
+                        onClick={() => {
+                          const isConfirm = window.confirm('Are you sure?');
+
+                          if (isConfirm === true) {
+                            deleteDoc(doc(db, 'users', item.id));
+                          } else {
+                            return;
+                          }
+                        }}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -116,6 +138,7 @@ export default function Home() {
             })}
           </tbody>
         </table>
+        {!!edit && edit}
       </div>
     </main>
   );

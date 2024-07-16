@@ -1,17 +1,17 @@
 {
-  "products": [
+  "users": [
     {
-      "title": "Muhammad Gibran",
+      "name": "Muhammad Gibran",
       "height": 170,
       "weight": 70
     },
     {
-      "title": "Macbook Air 2021",
+      "name": "Macbook Air 2021",
       "height": 155,
       "weight": 65
     },
     {
-      "title": "Macbook Air 2022",
+      "name": "Macbook Air 2022",
       "height": 178,
       "weight": 76
     }
