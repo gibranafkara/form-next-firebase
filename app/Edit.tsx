@@ -36,6 +36,7 @@ export default function EditButton(props: {
       height: edit.height,
       weight: edit.weight,
     });
+    onEdit();
   };
 
   return (
